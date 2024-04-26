@@ -1,0 +1,8 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  -  name: Installing nginx on ubuntu 22.04
+     apt:
+       name: nginx
+       state: present
