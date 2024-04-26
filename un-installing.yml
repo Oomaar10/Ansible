@@ -1,8 +1,16 @@
 ---
-- hosts: all
+- name: Uninstall Nginx from Ubuntu 22.04
+  hosts: all
   become: yes
+
   tasks:
-  -  name: Installing nginx on ubuntu 22.04
-     apt:
-       name: nginx
-       state: absent
+    - name: Stop Nginx service
+      service:
+        name: nginx
+        state: stopped
+      ignore_errors: yes
+
+    - name: Uninstall Nginx package
+      apt:
+        name: nginx
+        state: absent
