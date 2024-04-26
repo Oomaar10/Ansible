@@ -1,0 +1,45 @@
+---
+- name: Install Docker and Docker Compose on Ubuntu 22.04
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Update apt package cache and install dependencies
+      apt:
+        update_cache: yes
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          - software-properties-common
+
+    - name: Add Docker official GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable"
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present
+
+    - name: Add Docker Compose binary
+      get_url:
+        url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64"
+        dest: /usr/local/bin/docker-compose
+        mode: 'u+x'
+      vars:
+        docker_compose_version: 1.29.2
+
+    - name: Ensure Docker service is started and enabled
+      service:
+        name: docker
+        state: started
+        enabled: yes
